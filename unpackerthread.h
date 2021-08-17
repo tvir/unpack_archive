@@ -2,7 +2,6 @@
 #define UNPACKERTHREAD_H
 
 #include <QThread>
-#include <QDebug>
 
 #include <quazip/quazip/JlCompress.h>
 

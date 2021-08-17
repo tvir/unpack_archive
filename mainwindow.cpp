@@ -47,6 +47,7 @@ void MainWindow::chooseDir()
     curDirLabel->setText(QString("Текущая директория: %1").arg(dir));
     logs->setText(QString("Выбрана новая директория"));
     foundFiles.clear();
+    unpackedFiles.clear();
     if (unpackerThread->isRunning())
         unpackerThread->requestInterruption();
     else
@@ -60,15 +61,31 @@ void MainWindow::findArchive()
 {
     if (!curDir.exists())
     {
-        logs->append("Текущая директория удалена");
+        logs->append("Текущей директории не существует");
         return;
     }
-    if (foundFiles.isEmpty())
+    if (foundFiles.isEmpty() && !unpackerThread->isRunning())
     {
         logs->append("\nПроизводится проверка текущей директории");
         QStringList filters;
         filters << "*.zip";
         foundFiles = curDir.entryList(filters);
+        for (int i = 0; i < foundFiles.size(); ++i)
+        {
+            QString curFile = curDir.absoluteFilePath(foundFiles[i]);
+            if (unpackedFiles.contains(curFile))
+            {
+                if (unpackedFiles[curFile] == QFileInfo(curFile).lastModified())
+                {
+                    foundFiles.removeAt(i);
+                    i--;
+                }
+                else
+                    unpackedFiles[curFile] = QFileInfo(curFile).lastModified();
+            }
+            else
+                unpackedFiles[curFile] = QFileInfo(curFile).lastModified();
+        }
         if (foundFiles.isEmpty())
             logs->append("Не обнаружено файлов для распаковки");
         else

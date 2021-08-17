@@ -11,8 +11,8 @@
 #include <QStringList>
 #include <QDebug>
 #include <QTimer>
-
-#include <queue>
+#include <QDateTime>
+#include <QMap>
 
 #include "unpackerthread.h"
 
@@ -41,6 +41,7 @@ private:
 
     QDir curDir;
     QStringList foundFiles;
+    QMap <QString, QDateTime> unpackedFiles;
 
 };
 #endif // MAINWINDOW_H
